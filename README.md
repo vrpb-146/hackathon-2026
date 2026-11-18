@@ -18,7 +18,7 @@ Put any API keys in a `.env` file in the project root (never commit it).
 ## Live demo
 
 1. Put the trained model in `models/prompt-injection-distilbert/` (not in git).
-2. Create a `.env` file with your key: `GEMINI_API_KEY=...` (optional: `GEMINI_MODEL=gemini-flash-latest`).
+2. Create a `.env` file with your key: `GEMINI_API_KEY=...` (optional: `GEMINI_MODEL=gemini-3.5-flash-lite`).
 3. Run:
 
 ```powershell
