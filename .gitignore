@@ -1,0 +1,29 @@
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Secrets
+.env
+.env.*
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Model files
+models/
+*.pkl
+*.joblib
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.onnx
+*.h5
+*.ckpt
+
+# Streamlit / OS
+.streamlit/secrets.toml
+.DS_Store
+Thumbs.db
