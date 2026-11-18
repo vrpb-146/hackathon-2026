@@ -1,21 +1,33 @@
-# Prompt injection detector starter kit
+# Prompt Shield
+
+An AI-based detector that catches prompt injection and jailbreak attempts in user messages and blocks them before they reach a chatbot, while letting genuine questions through. Built for a college hackathon.
+
+## Setup
+
+Use Python 3.12 (3.15 is too new: several packages have no prebuilt wheels yet).
+
+```powershell
+py install 3.12
+py -V:3.12 -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+Put any API keys in a `.env` file in the project root (never commit it).
 
 ## Files
 
-- `prepare_data.py` downloads and merges four public Hugging Face datasets into `prompt_injection.csv`.
-- `prompt_injection_distilbert_colab.ipynb` is the Colab fine-tuning notebook.
+- `prepare_data.py` downloads public Hugging Face datasets and writes `data/train/train.csv` and the held-out `data/test/test.csv` (no overlap, near-duplicates removed).
+- `data_stats.py` prints rows per dataset, attack vs genuine counts, examples, and a train/test overlap check.
+- `prompt_injection_distilbert_colab.ipynb` fine-tunes DistilBERT in Colab on `train.csv` and evaluates once on `test.csv`.
 
-## Data sources
+## Data
 
-The prep script combines the MIT-licensed S-Labs dataset (15k, includes hard negatives), Apache-2.0 deepset dataset (662), Apache-2.0 Axiotic benign prompts (11k), and Apache-2.0 Guychuk binary dataset (464k, capped at 50k rows). Dataset cards and licenses can change; check the cards before redistribution. See [S-Labs](https://huggingface.co/datasets/S-Labs/prompt-injection-dataset), [deepset](https://huggingface.co/datasets/deepset/prompt-injections), [Axiotic](https://huggingface.co/datasets/axiotic/ogma-prompt-injection-benign), and [Guychuk](https://huggingface.co/datasets/guychuk/benign-malicious-prompt-classification).
+CSV columns: `text, label, category` (+ `source`). `label`: 1 = prompt injection / jailbreak, 0 = genuine.
 
-## Run
+- `data/train/` – training data
+- `data/test/` – held-out evaluation set (never used for training or tuning)
 
-```bash
-pip install datasets pandas
-python prepare_data.py
-```
+Sources: [S-Labs](https://huggingface.co/datasets/S-Labs/prompt-injection-dataset) (MIT), [deepset](https://huggingface.co/datasets/deepset/prompt-injections) (Apache-2.0), [Axiotic benign](https://huggingface.co/datasets/axiotic/ogma-prompt-injection-benign) (Apache-2.0). Check the dataset cards before redistribution.
 
-Then upload the resulting CSV to Colab, select a GPU runtime if available, and run the notebook cells. The notebook saves `prompt-injection-distilbert.zip`.
-
-The CSV includes `text`, `label` (0 benign, 1 injection), `source`, and `source_split`. Preparation removes empty/very long examples, exact duplicates, and any text with contradictory labels. Collection downloads data from Hugging Face; internet access is needed.
+`guychuk/benign-malicious-prompt-classification` was deliberately left out: its "malicious" label mixes prompt injections with plain harmful requests, and its "benign" label also contains harmful requests.
